@@ -497,6 +497,14 @@ int EvseRapiProcessor::processCmd()
       }
       break;
 #endif // VOLTMETER
+    // Timed override function which skips the State check, so will work even if in Timed Delay
+    case 'O':
+      if (tokenCnt == 2) {
+	g_EvseController.SetTimeLimit15(dtou32(tokens[1]));
+	if (!g_OBD.UpdatesDisabled()) g_OBD.Update(OBD_UPD_FORCE);
+	rc = 0;
+      }
+      break;
 #if defined(ADVPWR) && !defined(RAPI_FF)
     case 'R': // stuck relay check
       if (tokenCnt == 2) {
