@@ -221,6 +221,7 @@ class J1772EVSEController {
 
 #ifdef TIME_LIMIT
   uint8_t m_timeLimit15; // increments of 15min to extend charge time
+  uint8_t m_timeLimit1; // increments of 15min to extend charge time
   time_t m_timeLimitEnd; // end time
 #endif
 
@@ -445,6 +446,7 @@ public:
   void ClrTimeLimit() { m_timeLimitEnd = 0; m_timeLimit15 = 0; }
   void SetTimeLimitEnd(time_t limit) { m_timeLimitEnd = limit; }
   void SetTimeLimit15(uint8_t mind15);
+  void SetTimeLimit1(uint8_t mind1);
   uint8_t GetTimeLimit15() { return m_timeLimit15; }
   time_t GetTimeLimitEnd() { return m_timeLimitEnd; }
 #endif // TIME_LIMIT

@@ -374,6 +374,14 @@ int EvseRapiProcessor::processCmd()
 	}
       }
       break;
+    // Timed override function which skips the State check, so will work even if in Timed Delay
+    case '5':
+      if (tokenCnt == 2) {
+	g_EvseController.SetTimeLimit1(dtou32(tokens[1]));
+	if (!g_OBD.UpdatesDisabled()) g_OBD.Update(OBD_UPD_FORCE);
+	rc = 0;
+      }
+      break;
 #endif // TIME_LIMIT
 #if defined(AUTH_LOCK) && !defined(AUTH_LOCK_REG)
     case '4': // auth lock
@@ -497,14 +505,6 @@ int EvseRapiProcessor::processCmd()
       }
       break;
 #endif // VOLTMETER
-    // Timed override function which skips the State check, so will work even if in Timed Delay
-    case 'O':
-      if (tokenCnt == 2) {
-	g_EvseController.SetTimeLimit15(dtou32(tokens[1]));
-	if (!g_OBD.UpdatesDisabled()) g_OBD.Update(OBD_UPD_FORCE);
-	rc = 0;
-      }
-      break;
 #if defined(ADVPWR) && !defined(RAPI_FF)
     case 'R': // stuck relay check
       if (tokenCnt == 2) {

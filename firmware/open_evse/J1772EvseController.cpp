@@ -1930,6 +1930,23 @@ void J1772EVSEController::SetTimeLimit15(uint8_t mind15)
   }
 
 }
+void J1772EVSEController::SetTimeLimit1(uint8_t mind1)
+{
+  if (mind1) {
+    m_timeLimit1 = mind1;
+    m_timeLimitEnd = (time_t)(1lu*60lu * (unsigned long)mind1);
+#ifdef DELAYTIMER
+    g_DelayTimer.SetManualOverride();
+#endif // DELAYTIMER
+  }
+  else {
+    ClrTimeLimit();
+#ifdef DELAYTIMER
+    g_DelayTimer.ClrManualOverride();
+#endif // DELAYTIMER
+  }
+
+}
 #endif // TIME_LIMIT
 
 //-- end J1772EVSEController
