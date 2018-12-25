@@ -1930,11 +1930,12 @@ void J1772EVSEController::SetTimeLimit15(uint8_t mind15)
   }
 
 }
-void J1772EVSEController::SetTimeLimit1(uint8_t mind1)
+void J1772EVSEController::SetTimeExtend(uint8_t mine1)
 {
-  if (mind1) {
-    m_timeLimit1 = mind1;
-    m_timeLimitEnd = (time_t)(1lu*60lu * (unsigned long)mind1);
+  if (mine1) {
+    //m_timeExtend = mind1;
+    // add to existing time
+    m_timeLimitEnd = GetElapsedChargeTime() + (time_t)(1lu*60lu * (unsigned long)mine1);
 #ifdef DELAYTIMER
     g_DelayTimer.SetManualOverride();
 #endif // DELAYTIMER
