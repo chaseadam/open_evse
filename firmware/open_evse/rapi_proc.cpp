@@ -48,11 +48,11 @@ uint8_t htou8(const char *s)
       u += c - 'A' + 10;
     }
       else if ((c >= 'a') && (c <= 'f')) {
-	u += c - 'a' + 10;
+        u += c - 'a' + 10;
       }
       else {
-	// invalid character received
-	return 0;
+        // invalid character received
+        return 0;
       }
     }
   }
@@ -107,31 +107,31 @@ int EvseRapiProcessor::doCmd()
       if (echo) write(c);
 
       if (c == ESRAPI_SOC) {
-	buffer[0] = ESRAPI_SOC;
-	bufCnt = 1;
+        buffer[0] = ESRAPI_SOC;
+        bufCnt = 1;
       }
       else if (buffer[0] == ESRAPI_SOC) {
-	if (bufCnt < ESRAPI_BUFLEN) {
-	  if (c == ESRAPI_EOC) {
-	    buffer[bufCnt++] = 0;
-	    if (!tokenize(buffer)) {
-	      rc = processCmd();
-	    }
-	    else {
-	      reset();
+        if (bufCnt < ESRAPI_BUFLEN) {
+          if (c == ESRAPI_EOC) {
+            buffer[bufCnt++] = 0;
+            if (!tokenize(buffer)) {
+              rc = processCmd();
+            }
+            else {
+              reset();
 #ifdef RAPI_SEQUENCE_ID
-	      curReceivedSeqId = INVALID_SEQUENCE_ID;
+              curReceivedSeqId = INVALID_SEQUENCE_ID;
 #endif // RAPI_SEQUENCE_ID
-	      response(0);
-	    }
-	  }
-	  else {
-	    buffer[bufCnt++] = c;
-	  }
-	}
-	else { // too many chars
-	  reset();
-	}
+              response(0);
+            }
+          }
+          else {
+            buffer[bufCnt++] = c;
+          }
+        }
+        else { // too many chars
+          reset();
+        }
       }
     }
   }
@@ -178,18 +178,18 @@ int EvseRapiProcessor::tokenize(char *buf)
   while (*s) {
     if (*s == ' ') {
       if (tokenCnt >= ESRAPI_MAX_ARGS) {
-	chktype = 255;
-	break;
+        chktype = 255;
+        break;
       }
       else {
-	achkSum += *s;
-	xchkSum ^= *s;
-	*s = '\0';
-	tokens[tokenCnt++] = ++s;
+        achkSum += *s;
+        xchkSum ^= *s;
+        *s = '\0';
+        tokens[tokenCnt++] = ++s;
       }
     }
     else if ((*s == '*') ||// additive checksum
-	     (*s == '^')) { // XOR checksum
+             (*s == '^')) { // XOR checksum
       if (*s == '*') chktype = 1;
       else if (*s == '^') chktype = 2;
       *(s++) = '\0';
@@ -203,8 +203,8 @@ int EvseRapiProcessor::tokenize(char *buf)
   }
 
   int rc = ((chktype == 0) ||
-	   ((chktype == 1) && (hchkSum == achkSum)) ||
- 	   ((chktype == 2) && (hchkSum == xchkSum))) ? 0 : 1;
+           ((chktype == 1) && (hchkSum == achkSum)) ||
+           ((chktype == 2) && (hchkSum == xchkSum))) ? 0 : 1;
   if (rc) tokenCnt = 0;
   //  sprintf(g_sTmp,"trc: %d",rc);
   //  g_EIRP.writeStr(g_sTmp);
@@ -243,9 +243,9 @@ int EvseRapiProcessor::processCmd()
     switch(*s) {
     case '0': // enable/disable LCD update
       if (tokenCnt == 2) {
-	g_OBD.DisableUpdate((*tokens[1] == '0') ? 1 : 0);
-	if (*tokens[1] != '0') g_OBD.Update(OBD_UPD_FORCE);
-	rc = 0;
+        g_OBD.DisableUpdate((*tokens[1] == '0') ? 1 : 0);
+        if (*tokens[1] != '0') g_OBD.Update(OBD_UPD_FORCE);
+        rc = 0;
       }
       break;
  #ifdef BTN_MENU
@@ -258,8 +258,8 @@ int EvseRapiProcessor::processCmd()
 #ifdef LCD16X2
     case 'B': // LCD backlight
       if (tokenCnt == 2) {
-	g_OBD.LcdSetBacklightColor(dtou32(tokens[1]));
-	rc = 0;
+        g_OBD.LcdSetBacklightColor(dtou32(tokens[1]));
+        rc = 0;
       }
       break;
 #endif // LCD16X2      
@@ -274,53 +274,53 @@ int EvseRapiProcessor::processCmd()
 #ifdef RAPI_FF
     case 'F': // enable/disable feature
       if (tokenCnt == 3) {
-	u1.u8 = (uint8_t)(*tokens[2] - '0');
-	if (u1.u8 <= 1) {
-	  rc = 0;
-	  switch(*tokens[1]) {
-	  case 'D': // diode check
-	    g_EvseController.EnableDiodeCheck(u1.u8);
-	    break;
-	  case 'E': // command echo
-	    echo = ((u1.u8 == '0') ? 0 : 1);	      
-	    break;
+        u1.u8 = (uint8_t)(*tokens[2] - '0');
+        if (u1.u8 <= 1) {
+          rc = 0;
+          switch(*tokens[1]) {
+          case 'D': // diode check
+            g_EvseController.EnableDiodeCheck(u1.u8);
+            break;
+          case 'E': // command echo
+            echo = ((u1.u8 == '0') ? 0 : 1);          
+            break;
 #ifdef ADVPWR
-	  case 'F': // GFI self test
-	    g_EvseController.EnableGfiSelfTest(u1.u8);
-	    break;
-	  case 'G': // ground check
-	    g_EvseController.EnableGndChk(u1.u8);
-	    break;
-	  case 'R': // stuck relay check
-	    g_EvseController.EnableStuckRelayChk(u1.u8);
-	    break;
+          case 'F': // GFI self test
+            g_EvseController.EnableGfiSelfTest(u1.u8);
+            break;
+          case 'G': // ground check
+            g_EvseController.EnableGndChk(u1.u8);
+            break;
+          case 'R': // stuck relay check
+            g_EvseController.EnableStuckRelayChk(u1.u8);
+            break;
 #endif // ADVPWR
 #ifdef TEMPERATURE_MONITORING
-	  case 'T': // temperature monitoring
-	    g_EvseController.EnableTempChk(u1.u8);
-	    break;
+          case 'T': // temperature monitoring
+            g_EvseController.EnableTempChk(u1.u8);
+            break;
 #endif // TEMPERATURE_MONITORING
-	  case 'V': // vent required check
-	    g_EvseController.EnableVentReq(u1.u8);
-	    break;
-	  default: // unknown
-	    rc = -1;
-	  }
-	}
+          case 'V': // vent required check
+            g_EvseController.EnableVentReq(u1.u8);
+            break;
+          default: // unknown
+            rc = -1;
+          }
+        }
       }
       break;
 #endif // RAPI_FF
 #ifdef LCD16X2
     case 'P': // print to LCD
       if (tokenCnt >= 4) {
-	u1.u = dtou32(tokens[1]); // x
-	u2.u = dtou32(tokens[2]); // y
-	// now restore the spaces that were replaced w/ nulls by tokenizing
-	for (u3.i=4;u3.i < tokenCnt;u3.i++) {
-	  *(tokens[u3.i]-1) = ' ';
-	}
-	g_OBD.LcdPrint(u1.u,u2.u,tokens[3]);
-	rc = 0;
+        u1.u = dtou32(tokens[1]); // x
+        u2.u = dtou32(tokens[2]); // y
+        // now restore the spaces that were replaced w/ nulls by tokenizing
+        for (u3.i=4;u3.i < tokenCnt;u3.i++) {
+          *(tokens[u3.i]-1) = ' ';
+        }
+        g_OBD.LcdPrint(u1.u,u2.u,tokens[3]);
+        rc = 0;
       }
       break;
 #endif // LCD16X2      
@@ -341,7 +341,7 @@ int EvseRapiProcessor::processCmd()
     case '0': // set LCD type
       if (tokenCnt == 2) {
 #ifdef RGBLCD
-	rc = g_EvseController.SetBacklightType((*tokens[1] == '0') ? BKL_TYPE_MONO : BKL_TYPE_RGB);
+        rc = g_EvseController.SetBacklightType((*tokens[1] == '0') ? BKL_TYPE_MONO : BKL_TYPE_RGB);
 #endif // RGBLCD
       }
       break;
@@ -349,112 +349,112 @@ int EvseRapiProcessor::processCmd()
 #ifdef RTC      
     case '1': // set RTC
       if (tokenCnt == 7) {
-	extern void SetRTC(uint8_t y,uint8_t m,uint8_t d,uint8_t h,uint8_t mn,uint8_t s);
-	SetRTC(dtou32(tokens[1]),dtou32(tokens[2]),dtou32(tokens[3]),
-	       dtou32(tokens[4]),dtou32(tokens[5]),dtou32(tokens[6]));
-	rc = 0;
+        extern void SetRTC(uint8_t y,uint8_t m,uint8_t d,uint8_t h,uint8_t mn,uint8_t s);
+        SetRTC(dtou32(tokens[1]),dtou32(tokens[2]),dtou32(tokens[3]),
+               dtou32(tokens[4]),dtou32(tokens[5]),dtou32(tokens[6]));
+        rc = 0;
       }
       break;
 #endif // RTC      
 #ifdef AMMETER
     case '2': // ammeter calibration mode
       if (tokenCnt == 2) {
-	g_EvseController.EnableAmmeterCal((*tokens[1] == '1') ? 1 : 0);
-	rc = 0;
+        g_EvseController.EnableAmmeterCal((*tokens[1] == '1') ? 1 : 0);
+        rc = 0;
       }
       break;
 #endif // AMMETER
 #ifdef TIME_LIMIT
     case '3': // set time limit
       if (tokenCnt == 2) {
-	if (g_EvseController.LimitsAllowed()) {
-	  g_EvseController.SetTimeLimit15(dtou32(tokens[1]));
-	  if (!g_OBD.UpdatesDisabled()) g_OBD.Update(OBD_UPD_FORCE);
-	  rc = 0;
-	}
+        if (g_EvseController.LimitsAllowed()) {
+          g_EvseController.SetTimeLimit15(dtou32(tokens[1]));
+          if (!g_OBD.UpdatesDisabled()) g_OBD.Update(OBD_UPD_FORCE);
+          rc = 0;
+        }
       }
       break;
     // Timed override function which skips the State check, so will work even if in Timed Delay
     case '5':
       if (tokenCnt == 2) {
-	g_EvseController.SetTimeExtend(dtou32(tokens[1]));
-	if (!g_OBD.UpdatesDisabled()) g_OBD.Update(OBD_UPD_FORCE);
-	rc = 0;
+        g_EvseController.SetTimeExtend(dtou32(tokens[1]));
+        if (!g_OBD.UpdatesDisabled()) g_OBD.Update(OBD_UPD_FORCE);
+        rc = 0;
       }
       break;
 #endif // TIME_LIMIT
 #if defined(AUTH_LOCK) && !defined(AUTH_LOCK_REG)
     case '4': // auth lock
       if (tokenCnt == 2) {
-	g_EvseController.AuthLock((int8_t)dtou32(tokens[1]));
-	rc = 0;
+        g_EvseController.AuthLock((int8_t)dtou32(tokens[1]));
+        rc = 0;
       }
       break;
 #endif // AUTH_LOCK && !AUTH_LOCK_REG
 #ifdef AMMETER
     case 'A':
       if (tokenCnt == 3) {
-	g_EvseController.SetCurrentScaleFactor(dtou32(tokens[1]));
-	g_EvseController.SetAmmeterCurrentOffset(dtou32(tokens[2]));
-	rc = 0;
+        g_EvseController.SetCurrentScaleFactor(dtou32(tokens[1]));
+        g_EvseController.SetAmmeterCurrentOffset(dtou32(tokens[2]));
+        rc = 0;
       }
       break;
 #endif // AMMETER
     case 'C': // current capacity
       if ((tokenCnt == 2) || (tokenCnt == 3)) {
-	if (tokenCnt == 3) {
-	  // just make volatile no matter what character specified
-	  u1.u8 = 1; // nosave = 1
-	}
-	else {
-	  u1.u8 = 0; // nosave = 0
-	}
+        if (tokenCnt == 3) {
+          // just make volatile no matter what character specified
+          u1.u8 = 1; // nosave = 1
+        }
+        else {
+          u1.u8 = 0; // nosave = 0
+        }
 #ifdef TEMPERATURE_MONITORING
-	u2.u8 = dtou32(tokens[1]);
-	if (g_TempMonitor.OverTemperature() &&
-	    (u2.u8 > g_EvseController.GetCurrentCapacity())) {
-	  // don't allow raising current capacity during
-	  // overtemperature event
-	  rc = 1;
-	}
-	else {
-	  rc = g_EvseController.SetCurrentCapacity(u2.u8,1,u1.u8);
-	}
+        u2.u8 = dtou32(tokens[1]);
+        if (g_TempMonitor.OverTemperature() &&
+            (u2.u8 > g_EvseController.GetCurrentCapacity())) {
+          // don't allow raising current capacity during
+          // overtemperature event
+          rc = 1;
+        }
+        else {
+          rc = g_EvseController.SetCurrentCapacity(u2.u8,1,u1.u8);
+        }
 #else // !TEMPERATURE_MONITORING
-	rc = g_EvseController.SetCurrentCapacity(u2.u8,1,u1.u8);
+        rc = g_EvseController.SetCurrentCapacity(u2.u8,1,u1.u8);
 #endif // TEMPERATURE_MONITORING
 
 
-	sprintf(buffer,"%d",(int)g_EvseController.GetCurrentCapacity());
-	bufCnt = 1; // flag response text output
+        sprintf(buffer,"%d",(int)g_EvseController.GetCurrentCapacity());
+        bufCnt = 1; // flag response text output
       }
       break;
 #ifndef RAPI_FF
     case 'D': // diode check
       if (tokenCnt == 2) {
-	g_EvseController.EnableDiodeCheck((*tokens[1] == '0') ? 0 : 1);
-	rc = 0;
+        g_EvseController.EnableDiodeCheck((*tokens[1] == '0') ? 0 : 1);
+        rc = 0;
       }
       break;
     case 'E': // echo
       if (tokenCnt == 2) {
-	echo = ((*tokens[1] == '0') ? 0 : 1);
-	rc = 0;
+        echo = ((*tokens[1] == '0') ? 0 : 1);
+        rc = 0;
       }
       break;
 #ifdef GFI_SELFTEST
     case 'F': // GFI self test
       if (tokenCnt == 2) {
-	g_EvseController.EnableGfiSelfTest(*tokens[1] == '0' ? 0 : 1);
-	rc = 0;
+        g_EvseController.EnableGfiSelfTest(*tokens[1] == '0' ? 0 : 1);
+        rc = 0;
       }
       break;
 #endif // GFI_SELFTEST
 #ifdef ADVPWR
     case 'G': // ground check
       if (tokenCnt == 2) {
-	g_EvseController.EnableGndChk(*tokens[1] == '0' ? 0 : 1);
-	rc = 0;
+        g_EvseController.EnableGndChk(*tokens[1] == '0' ? 0 : 1);
+        rc = 0;
       }
       break;
 #endif // ADVPWR
@@ -462,11 +462,11 @@ int EvseRapiProcessor::processCmd()
 #ifdef CHARGE_LIMIT
     case 'H': // cHarge limit
       if (tokenCnt == 2) {
-	if (g_EvseController.LimitsAllowed()) {
-	  g_EvseController.SetChargeLimitkWh(dtou32(tokens[1]));
-	  if (!g_OBD.UpdatesDisabled()) g_OBD.Update(OBD_UPD_FORCE);
-	  rc = 0;
-	}
+        if (g_EvseController.LimitsAllowed()) {
+          g_EvseController.SetChargeLimitkWh(dtou32(tokens[1]));
+          if (!g_OBD.UpdatesDisabled()) g_OBD.Update(OBD_UPD_FORCE);
+          rc = 0;
+        }
       }
       break;
 #endif // CHARGE_LIMIT
@@ -480,64 +480,64 @@ int EvseRapiProcessor::processCmd()
     case 'L': // service level
       if (tokenCnt == 2) {
       switch(*tokens[1]) {
-	case '1':
-	case '2':
-	  g_EvseController.SetSvcLevel(*tokens[1] - '0',1);
+        case '1':
+        case '2':
+          g_EvseController.SetSvcLevel(*tokens[1] - '0',1);
 #if defined(ADVPWR) && defined(AUTOSVCLEVEL)
-	  g_EvseController.EnableAutoSvcLevel(0);
+          g_EvseController.EnableAutoSvcLevel(0);
 #endif
-	  rc = 0;
-	  break;
+          rc = 0;
+          break;
 #if defined(ADVPWR) && defined(AUTOSVCLEVEL)
-	case 'A':
-	  g_EvseController.EnableAutoSvcLevel(1);
-	  rc = 0;
-	  break;
+        case 'A':
+          g_EvseController.EnableAutoSvcLevel(1);
+          rc = 0;
+          break;
 #endif // ADVPWR && AUTOSVCLEVEL
-	}
+        }
       }
       break;
 #ifdef VOLTMETER
     case 'M':
       if (tokenCnt == 3) {
         g_EvseController.SetVoltmeter(dtou32(tokens[1]),dtou32(tokens[2]));
-	rc = 0;
+        rc = 0;
       }
       break;
 #endif // VOLTMETER
 #if defined(ADVPWR) && !defined(RAPI_FF)
     case 'R': // stuck relay check
       if (tokenCnt == 2) {
-	g_EvseController.EnableStuckRelayChk(*tokens[1] == '0' ? 0 : 1);
-	rc = 0;
+        g_EvseController.EnableStuckRelayChk(*tokens[1] == '0' ? 0 : 1);
+        rc = 0;
       }
       break;
 #endif // ADVPWR && !RAPI_FF
 #ifdef DELAYTIMER     
     case 'T': // timer
       if (tokenCnt == 5) {
-	extern DelayTimer g_DelayTimer;
-	u1.u8 = (uint8_t)dtou32(tokens[1]);
-	u2.u8 = (uint8_t)dtou32(tokens[2]);
-	u3.u8 = (uint8_t)dtou32(tokens[3]);
-	u4.u8 = (uint8_t)dtou32(tokens[4]);
-	if ((u1.u8 == 0) && (u2.u8 == 0) && (u3.u8 == 0) && (u4.u8 == 0)) {
-	  g_DelayTimer.Disable();
-	}
-	else {
-	  g_DelayTimer.SetStartTimer(u1.u8,u2.u8);
-	  g_DelayTimer.SetStopTimer(u3.u8,u4.u8);
-	  g_DelayTimer.Enable();
-	}
-	rc = 0;
+        extern DelayTimer g_DelayTimer;
+        u1.u8 = (uint8_t)dtou32(tokens[1]);
+        u2.u8 = (uint8_t)dtou32(tokens[2]);
+        u3.u8 = (uint8_t)dtou32(tokens[3]);
+        u4.u8 = (uint8_t)dtou32(tokens[4]);
+        if ((u1.u8 == 0) && (u2.u8 == 0) && (u3.u8 == 0) && (u4.u8 == 0)) {
+          g_DelayTimer.Disable();
+        }
+        else {
+          g_DelayTimer.SetStartTimer(u1.u8,u2.u8);
+          g_DelayTimer.SetStopTimer(u3.u8,u4.u8);
+          g_DelayTimer.Enable();
+        }
+        rc = 0;
       }
       break;
 #endif // DELAYTIMER      
 #ifndef RAPI_FF
     case 'V': // vent required
       if (tokenCnt == 2) {
-	g_EvseController.EnableVentReq(*tokens[1] == '0' ? 0 : 1);
-	rc = 0;
+        g_EvseController.EnableVentReq(*tokens[1] == '0' ? 0 : 1);
+        rc = 0;
       }
       break;
 #endif // !RAPI_FF
@@ -548,15 +548,15 @@ int EvseRapiProcessor::processCmd()
     switch(*s) {
     case '0': // get EV connect state
       {
-	uint8_t connstate;
-	if (g_EvseController.GetPilot()->GetState() == PILOT_STATE_N12) {
-	  connstate = 2; // unknown
-	}
-	else {
-	  if (g_EvseController.EvConnected()) connstate = 1;
-	  else connstate = 0;
-	}
-	sprintf(buffer,"%d",(int)connstate);
+        uint8_t connstate;
+        if (g_EvseController.GetPilot()->GetState() == PILOT_STATE_N12) {
+          connstate = 2; // unknown
+        }
+        else {
+          if (g_EvseController.EvConnected()) connstate = 1;
+          else connstate = 0;
+        }
+        sprintf(buffer,"%d",(int)connstate);
       }
       bufCnt = 1; // flag response text output
       rc = 0;
@@ -587,10 +587,10 @@ int EvseRapiProcessor::processCmd()
     case 'C': // get current capacity range
       u1.i = MIN_CURRENT_CAPACITY_J1772;
       if (g_EvseController.GetCurSvcLevel() == 2) {
-	u2.i = MAX_CURRENT_CAPACITY_L2;
+        u2.i = MAX_CURRENT_CAPACITY_L2;
       }
       else {
-	u2.i = MAX_CURRENT_CAPACITY_L1;
+        u2.i = MAX_CURRENT_CAPACITY_L1;
       }
       sprintf(buffer,"%d %d",u1.i,u2.i);
       bufCnt = 1; // flag response text output
@@ -600,16 +600,16 @@ int EvseRapiProcessor::processCmd()
     case 'D': // get delay timer
       extern DelayTimer g_DelayTimer;
       if (g_DelayTimer.IsTimerEnabled()) {
-	u1.i = g_DelayTimer.GetStartTimerHour();
-	u2.i = g_DelayTimer.GetStartTimerMin();
-	u3.i = g_DelayTimer.GetStopTimerHour();
-	u4.i = g_DelayTimer.GetStopTimerMin();
+        u1.i = g_DelayTimer.GetStartTimerHour();
+        u2.i = g_DelayTimer.GetStartTimerMin();
+        u3.i = g_DelayTimer.GetStopTimerHour();
+        u4.i = g_DelayTimer.GetStopTimerMin();
       }
       else {
-	u1.i = 0;
-	u2.i = 0;
-	u3.i = 0;
-	u4.i = 0;
+        u1.i = 0;
+        u2.i = 0;
+        u3.i = 0;
+        u4.i = 0;
       }
       sprintf(buffer,"%d %d %d %d",u1.i,u2.i,u3.i,u4.i);
       bufCnt = 1; // flag response text output
@@ -633,8 +633,8 @@ int EvseRapiProcessor::processCmd()
       u2.u = g_EvseController.GetNoGndTripCnt();
       u3.u = g_EvseController.GetStuckRelayTripCnt();
 #else
-	  u2.u = 0;
-	  u3.u = 0;
+          u2.u = 0;
+          u3.u = 0;
 #endif // ADVPWR
       sprintf(buffer,"%x %x %x",u1.u,u2.u,u3.u);
       bufCnt = 1; // flag response text output
@@ -677,8 +677,8 @@ int EvseRapiProcessor::processCmd()
 #endif // TEMPERATURE_MONITORING_NY
     case 'P':
       sprintf(buffer,"%d %d %d",(int)g_TempMonitor.m_DS3231_temperature,
-	      (int)g_TempMonitor.m_MCP9808_temperature,
-	      (int)g_TempMonitor.m_TMP007_temperature);
+              (int)g_TempMonitor.m_MCP9808_temperature,
+              (int)g_TempMonitor.m_TMP007_temperature);
       /* this is bigger than using sprintf
       strcpy(buffer,u2a(g_TempMonitor.m_DS3231_temperature));
       strcat(buffer,g_sSpace);
@@ -726,10 +726,10 @@ int EvseRapiProcessor::processCmd()
 #ifdef FAKE_CHARGING_CURRENT
     case '0': // set fake charging current
       if (tokenCnt == 2) {
-	g_EvseController.SetChargingCurrent(dtou32(tokens[1])*1000);
-	g_OBD.SetAmmeterDirty(1);
-	g_OBD.Update(OBD_UPD_FORCE);
-	rc = 0;
+        g_EvseController.SetChargingCurrent(dtou32(tokens[1])*1000);
+        g_OBD.SetAmmeterDirty(1);
+        g_OBD.Update(OBD_UPD_FORCE);
+        rc = 0;
       }
       break;
 #endif // FAKE_CHARGING_CURRENT
@@ -741,11 +741,11 @@ int EvseRapiProcessor::processCmd()
     switch(*s) {
     case '1': // set relayCloseMs
       if (tokenCnt == 2) {
-	u1.u32 = dtou32(tokens[1]);
-	g_EvseController.setRelayHoldDelay(u1.u32);
-	sprintf(g_sTmp,"\nZ1 %ld",u1.u32);
-	Serial.println(g_sTmp);
-	eeprom_write_dword((uint32_t*)EOFS_RELAY_HOLD_DELAY,u1.u32);
+        u1.u32 = dtou32(tokens[1]);
+        g_EvseController.setRelayHoldDelay(u1.u32);
+        sprintf(g_sTmp,"\nZ1 %ld",u1.u32);
+        Serial.println(g_sTmp);
+        eeprom_write_dword((uint32_t*)EOFS_RELAY_HOLD_DELAY,u1.u32);
       }
       rc = 0;
       break;
@@ -880,22 +880,22 @@ int8_t EvseRapiProcessor::receiveResp(unsigned long msstart)
     int bytesavail = available();
     if (bytesavail) {
       for (int i=0;i < bytesavail;i++) {
-	char c = read();
+        char c = read();
 
-	if (!bufpos && c != ESRAPI_SOC) {
-	  // wait for start character
-	  continue;
-	}
-	else if (c == ESRAPI_EOC) {
-	  sendbuf[bufpos] = '\0';
-	  if (!tokenize(sendbuf)) return 0;
-	  else return 1;
-	  
-	}
-	else {
-	  sendbuf[bufpos++] = c;
-	  if (bufpos >= (RAPIS_BUFLEN-1)) return 2;
-	}
+        if (!bufpos && c != ESRAPI_SOC) {
+          // wait for start character
+          continue;
+        }
+        else if (c == ESRAPI_EOC) {
+          sendbuf[bufpos] = '\0';
+          if (!tokenize(sendbuf)) return 0;
+          else return 1;
+          
+        }
+        else {
+          sendbuf[bufpos++] = c;
+          if (bufpos >= (RAPIS_BUFLEN-1)) return 2;
+        }
       }
     }
   } while (!tokenCnt && ((millis() - msstart) < RAPIS_TIMEOUT_MS));
@@ -921,16 +921,16 @@ int8_t EvseRapiProcessor::sendCmd(const char *cmdstr)
 #endif // RAPI_SEQUENCE_ID
     if (!strcmp(tokens[0],"OK")
 #ifdef RAPI_SEQUENCE_ID
-	&& (seqId == curSentSeqId)
+        && (seqId == curSentSeqId)
 #endif // RAPI_SEQUENCE_ID
-	) {
+        ) {
       return 0;
     }
     else if (!strcmp(tokens[0],"NK")
 #ifdef RAPI_SEQUENCE_ID
-	     && (seqId == curSentSeqId)
+             && (seqId == curSentSeqId)
 #endif // RAPI_SEQUENCE_ID
-	     ) {
+             ) {
       return 1;
     }
     else { // command or async notification received - process it
