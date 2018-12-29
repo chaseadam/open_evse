@@ -377,8 +377,10 @@ int EvseRapiProcessor::processCmd()
     // Timed override function which skips the State check, so will work even if in Timed Delay
     case '5':
       if (tokenCnt == 2) {
-        g_EvseController.SetTimeExtend(dtou32(tokens[1]));
-        if (!g_OBD.UpdatesDisabled()) g_OBD.Update(OBD_UPD_FORCE);
+        g_DelayTimer.SetTimedOverride(dtou32(tokens[1]));
+        g_DelayTimer.SetManualOverride();
+        g_EvseController.Enable();
+        //if (!g_OBD.UpdatesDisabled()) g_OBD.Update(OBD_UPD_FORCE);
         rc = 0;
       }
       break;

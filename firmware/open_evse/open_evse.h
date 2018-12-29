@@ -1287,6 +1287,7 @@ class DelayTimer {
   uint8_t m_CurrMin;
   unsigned long m_LastCheck;
   uint8_t m_ManualOverride;
+  unsigned long m_TimedOverride;
 public:
   DelayTimer(){
     m_LastCheck = - (60ul * 1000ul);
@@ -1301,8 +1302,15 @@ public:
       m_ManualOverride = 1;
     }
   }
+
+  void SetTimedOverride(unsigned long sec){
+    m_TimedOverride = millis() + (sec * 1000lu);
+  }
+
+  void ClrTimedOverride() { m_TimedOverride = 0; }
   void ClrManualOverride() { m_ManualOverride = 0; }
   uint8_t ManualOverrideIsSet() { return m_ManualOverride; }
+  unsigned long TimedOverrideIsSet() { return m_TimedOverride; }
   
   uint8_t IsTimerEnabled(){
     return m_DelayTimerEnabled;

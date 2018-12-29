@@ -171,6 +171,7 @@ void GetRTC(char *buf) {
 #endif // RTC
 #ifdef DELAYTIMER
 DelayTimer g_DelayTimer;
+unsigned long currentMillis;
 #ifdef DELAYTIMER_MENU
 // Start variables to support RTC and Delay Timer - GoldServe
 uint16_t g_year;
@@ -2322,18 +2323,26 @@ void DelayTimer::CheckTime()
       }
       else { // sleep now
         if (!ManualOverrideIsSet()) {
-          if ((evseState != EVSE_STATE_SLEEPING)
-              //	       && (evseState != EVSE_STATE_C) // don't interrupt active charging
-              ) {
+          if (evseState != EVSE_STATE_SLEEPING) {
             g_EvseController.Sleep();
           }
         }
         else { // manual override is set
-          //if (evseState == EVSE_STATE_SLEEPING) {
+          if (evseState == EVSE_STATE_SLEEPING) {
             // we got here because manual override was set by
             // putting EVSE to sleep via shortpress while it was charging
             ClrManualOverride();
-          //}
+          }
+          // clear manual override if expired
+          if (TimedOverrideIsSet()) {
+            // WARNING: assuming we reach here at least once per second
+            unsigned long timedOverride = TimedOverrideIsSet();
+            // reset if > 5 minutes (unsigned rollover will handle < 0)
+            if (timedOverride - curms > 301000lu ) {
+              ClrManualOverride();
+              ClrTimedOverride();
+            }
+          }
         }
       }
 
