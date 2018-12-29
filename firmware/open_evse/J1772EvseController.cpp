@@ -1474,7 +1474,7 @@ if (TempChkEnabled()) {
         ClrTimeLimit();
 #endif // TIME_LIMIT
 #ifdef DELAYTIMER
-        g_DelayTimer.ClrManualOverride();
+        //g_DelayTimer.ClrManualOverride();
 #endif // DELAYTIMER
 #ifdef TEMPERATURE_MONITORING
     g_TempMonitor.ClrOverTemperatureLogged();
