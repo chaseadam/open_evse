@@ -1930,24 +1930,6 @@ void J1772EVSEController::SetTimeLimit15(uint8_t mind15)
   }
 
 }
-void J1772EVSEController::SetTimeExtend(uint8_t mine1)
-{
-  if (mine1) {
-    //m_timeExtend = mind1;
-    // add to existing time
-    m_timeLimitEnd = GetElapsedChargeTime() + (time_t)(1lu*60lu * (unsigned long)mine1);
-#ifdef DELAYTIMER
-    g_DelayTimer.SetManualOverride();
-#endif // DELAYTIMER
-  }
-  else {
-    ClrTimeLimit();
-#ifdef DELAYTIMER
-    g_DelayTimer.ClrManualOverride();
-#endif // DELAYTIMER
-  }
-
-}
 #endif // TIME_LIMIT
 
 //-- end J1772EVSEController
