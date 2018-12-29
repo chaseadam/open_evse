@@ -2307,34 +2307,34 @@ void DelayTimer::CheckTime()
       uint8_t evseState = g_EvseController.GetState();
 
       if (inTimeInterval) { // charge now
-	if (!ManualOverrideIsSet()) {
-	  if (evseState == EVSE_STATE_SLEEPING) {
-	    g_EvseController.Enable();
-	  }
-	}
-	else {
-	  if (evseState != EVSE_STATE_SLEEPING) {
-	    // we got here because manual override was set by
-	    // waking EVSE shortpress while it was sleeping
-	    ClrManualOverride();
-	  }
-	}
+        if (!ManualOverrideIsSet()) {
+          if (evseState == EVSE_STATE_SLEEPING) {
+            g_EvseController.Enable();
+          }
+        }
+        else {
+          if (evseState != EVSE_STATE_SLEEPING) {
+            // we got here because manual override was set by
+            // waking EVSE shortpress while it was sleeping
+            ClrManualOverride();
+          }
+        }
       }
       else { // sleep now
-	if (!ManualOverrideIsSet()) {
-	  if ((evseState != EVSE_STATE_SLEEPING)
-	      //	       && (evseState != EVSE_STATE_C) // don't interrupt active charging
-	      ) {
-	    g_EvseController.Sleep();
-	  }
-	}
-	else { // manual override is set
-	  if (evseState == EVSE_STATE_SLEEPING) {
-	    // we got here because manual override was set by
-	    // putting EVSE to sleep via shortpress while it was charging
-	    ClrManualOverride();
-	  }
-	}
+        if (!ManualOverrideIsSet()) {
+          if ((evseState != EVSE_STATE_SLEEPING)
+              //	       && (evseState != EVSE_STATE_C) // don't interrupt active charging
+              ) {
+            g_EvseController.Sleep();
+          }
+        }
+        else { // manual override is set
+          if (evseState == EVSE_STATE_SLEEPING) {
+            // we got here because manual override was set by
+            // putting EVSE to sleep via shortpress while it was charging
+            ClrManualOverride();
+          }
+        }
       }
 
       m_LastCheck = curms;
