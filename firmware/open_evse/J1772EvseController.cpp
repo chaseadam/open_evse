@@ -1747,8 +1747,6 @@ if (TempChkEnabled()) {
         ClrChargeLimit(); // clear charge limit
 #endif // CHARGE_LIMIT
         SetLimitSleep(1);
-        // reset override if forced into a timed session with RAPI command $S5
-        ClrManualOverride();
         Sleep();
       }
     }

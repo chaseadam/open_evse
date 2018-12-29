@@ -2329,11 +2329,11 @@ void DelayTimer::CheckTime()
           }
         }
         else { // manual override is set
-          if (evseState == EVSE_STATE_SLEEPING) {
+          //if (evseState == EVSE_STATE_SLEEPING) {
             // we got here because manual override was set by
             // putting EVSE to sleep via shortpress while it was charging
             ClrManualOverride();
-          }
+          //}
         }
       }
 
